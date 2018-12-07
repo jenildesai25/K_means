@@ -102,3 +102,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+.idea/dbnavigator.xml
+.idea/misc.xml
+*.xml
+.idea/Project2.iml
