@@ -26,12 +26,27 @@ def make_data_of_100_rows(file_path):
         print(e)
 
 
+def make_data_of_400_rows(file_path):
+    try:
+        if file_path == 'ATNTFaceImages400.txt':
+            # here the data is not transpose.columns contains images. ex. column 1st contains the image.
+            data_frame = pd.read_csv(file_path, header=None, sep=",")
+            data_frame_with_data = data_frame.iloc[:, :400]
+            data_frame_without_label = data_frame_with_data.iloc[1:, :]
+            # labels are in columns which has size (100,0)
+            labels = data_frame_with_data.transpose()[0].values
+            return data_frame_with_data, labels, data_frame_without_label
+    except Exception as e:
+        print(e)
+
+
 def k_means_algo(data_no_label, label_values, k):
     try:
         data_no_label = data_no_label.transpose()
         k_means = KMeans(n_clusters=k)
         k_means.fit(data_no_label)
         labels_from_kmeans = k_means.labels_
+        print('K means labels', labels_from_kmeans)
         C = confusion_matrix(y_true=label_values, y_pred=labels_from_kmeans)
         print('Confusion matrix is: ', C)
         C = C.T
@@ -72,9 +87,12 @@ def cluster_acc(y_true, y_pred):
 if __name__ == '__main__':
     user_input = input('please enter the file name if file does not exist in the directory program exists please give full path: ')
     k = int(input('enter value of k: '))
-    if 'ATNT' in user_input:
-        data, label, data_without_label = make_data_of_100_rows('ATNTFaceImages400.txt')
+    if 'ATNT' in user_input and k == 40:
+        data, label, data_without_label = make_data_of_400_rows('ATNTFaceImages400.txt')
         k_means_algo(data_without_label, label, k)
     elif 'Hand' in user_input:
         data, label, data_without_label = make_data_of_100_rows('HandWrittenLetters.txt')
+        k_means_algo(data_without_label, label, k)
+    elif 'ATNT' in user_input:
+        data, label, data_without_label = make_data_of_100_rows('ATNTFaceImages400.txt')
         k_means_algo(data_without_label, label, k)
